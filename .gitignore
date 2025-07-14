@@ -1,0 +1,11 @@
+# Ignore build files
+/build/
+*.o
+algo_trader
+
+# Ignore API keys or sensitive files
+*.env
+config.json
+
+# Ignore IDE-specific files
+.vscode/
