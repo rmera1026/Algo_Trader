@@ -149,6 +149,8 @@ int main() {
     const int MA_PERIOD = 200;
     const int RSI_PERIOD = 14;
     const int LOOK_AHEAD = 10;
+    const double STOP_LOSS_PERCENT = 0.01;  // 1% below entry price
+    const double TAKE_PROFIT_PERCENT = 0.02;  // 2% above entry price
 
     if (closes.size() < MA_PERIOD + LOOK_AHEAD + 1) {
         std::cerr << "❌ Not enough data: need at least " << MA_PERIOD + LOOK_AHEAD + 1 << " rows.\n";
@@ -168,13 +170,29 @@ int main() {
 
         if (above200 && bullishMACD && rsiBelow70) {
             ++triggers;
-            if (closes[i + LOOK_AHEAD] > closes[i]) ++successes;
+
+            double entryPrice = closes[i];
+            double stopLoss = entryPrice * (1.0 - STOP_LOSS_PERCENT);
+            double takeProfit = entryPrice * (1.0 + TAKE_PROFIT_PERCENT);
+
+            bool success = false;
+            for (size_t j = i + 1; j <= i + LOOK_AHEAD && j < closes.size(); ++j) {
+                if (closes[j] >= takeProfit) {
+                    success = true;
+                    break;
+                }
+                if (closes[j] <= stopLoss) {
+                    break;
+                }
+            }
+
+            if (success) ++successes;
         }
     }
 
     double win_rate = triggers ? (100.0 * successes / triggers) : 0.0;
 
-    std::cout << "\n📊 Strategy Results (With RSI)\n";
+    std::cout << "\n📊 Strategy Results (With Risk-Reward Ratios)\n";
     std::cout << "  Triggers  : " << triggers << "\n";
     std::cout << "  Successes : " << successes << "\n";
     std::cout << "  Win Rate  : " << win_rate << "%\n";
