@@ -1,16 +1,27 @@
 #include "indicators.h"
+#include "exceptions.h"
+#include <algorithm>
 #include <numeric>
+#include <cmath>
 #include <limits>
 
 // SMA calculation
 std::vector<double> calc_sma(const std::vector<double>& v, int period) {
-    std::vector<double> out(v.size(), std::numeric_limits<double>::quiet_NaN());
-    if (v.size() < period) return out;
+    if (period <= 0) {
+        throw CalculationException("SMA period must be positive");
+    }
+    if (v.empty()) {
+        throw CalculationException("Cannot calculate SMA on empty data");
+    }
 
-    double sum = std::accumulate(v.begin(), v.begin() + period, 0.0);
-    out[period - 1] = sum / period;
-    for (size_t i = period; i < v.size(); ++i) {
-        sum += v[i] - v[i - period];
+    std::vector<double> out(v.size(), std::numeric_limits<double>::quiet_NaN());
+    if (v.size() < static_cast<size_t>(period)) return out;
+
+    for (size_t i = period - 1; i < v.size(); ++i) {
+        double sum = 0.0;
+        for (int j = 0; j < period; ++j) {
+            sum += v[i - j];
+        }
         out[i] = sum / period;
     }
     return out;
