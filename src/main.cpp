@@ -6,11 +6,14 @@
 #include "indicators.h"
 #include "strategy.h"
 #include "exceptions.h"
+#include "benchmark.h"
 
 using json = nlohmann::json;
 
 int main() {
     try {
+        BENCHMARK("Total Execution Time");
+        
         const char* apiKey = std::getenv("API_KEY");
         if (!apiKey) {
             throw APIException("API key not set. Please set the API_KEY environment variable.");
@@ -23,26 +26,32 @@ int main() {
         const std::string url = "https://financialmodelingprep.com/api/v3/historical-price-full/" + symbol + "?serietype=line&apikey=" + std::string(apiKey);
 
         // Use the http_get function to fetch data
-        std::string readBuffer = http_get(url);
-
-        if (readBuffer.empty()) {
-            throw APIException("Empty response received from API");
-        }
-
+        std::string readBuffer;
         json j;
-        try {
-            j = json::parse(readBuffer);
-        } catch (json::parse_error& e) {
-            throw DataException("JSON parse error: " + std::string(e.what()));
-        }
+        nlohmann::json historical;  // Fixed: specify the type instead of auto
+        
+        {
+            BENCHMARK("Data Fetching & Parsing");
+            readBuffer = http_get(url);
 
-        if (!j.contains("historical") || !j["historical"].is_array()) {
-            throw DataException("JSON does not contain valid 'historical' array");
-        }
+            if (readBuffer.empty()) {
+                throw APIException("Empty response received from API");
+            }
 
-        auto historical = j["historical"];
-        if (historical.empty()) {
-            throw DataException("Historical data is empty");
+            try {
+                j = json::parse(readBuffer);
+            } catch (json::parse_error& e) {
+                throw DataException("JSON parse error: " + std::string(e.what()));
+            }
+
+            if (!j.contains("historical") || !j["historical"].is_array()) {
+                throw DataException("JSON does not contain valid 'historical' array");
+            }
+
+            historical = j["historical"];
+            if (historical.empty()) {
+                throw DataException("Historical data is empty");
+            }
         }
 
         std::cout << "✅ Total records: " << historical.size() << "\n";
@@ -81,16 +90,35 @@ int main() {
         const double STOP_LOSS_PERCENT = 0.01;
         const double TAKE_PROFIT_PERCENT = 0.02;
 
-        auto sma200 = calc_sma(closes, MA_PERIOD);
-        auto macd = calc_macd(closes);
-        auto rsi = calc_rsi(closes, RSI_PERIOD);
+        std::vector<double> sma200;
+        MACD macd;
+        std::vector<double> rsi;
+
+        {
+            BENCHMARK("All Indicator Calculations");
+            {
+                BENCHMARK("SMA Calculation");
+                sma200 = calc_sma(closes, MA_PERIOD);
+            }
+            {
+                BENCHMARK("MACD Calculation");
+                macd = calc_macd(closes);
+            }
+            {
+                BENCHMARK("RSI Calculation");
+                rsi = calc_rsi(closes, RSI_PERIOD);
+            }
+        }
 
         // Validate indicator calculations
         if (sma200.empty() || macd.macd.empty() || rsi.empty()) {
             throw CalculationException("Failed to calculate technical indicators");
         }
 
-        backtest_strategy(closes, sma200, rsi, macd.macd, macd.signal, LOOK_AHEAD, STOP_LOSS_PERCENT, TAKE_PROFIT_PERCENT);
+        {
+            BENCHMARK("Strategy Backtesting");
+            backtest_strategy(closes, sma200, rsi, macd.macd, macd.signal, LOOK_AHEAD, STOP_LOSS_PERCENT, TAKE_PROFIT_PERCENT);
+        }
 
         return 0;
 

@@ -1,4 +1,5 @@
 #include "strategy.h"
+#include "benchmark.h"
 #include <iostream>
 
 void backtest_strategy(const std::vector<double>& closes,
@@ -9,6 +10,9 @@ void backtest_strategy(const std::vector<double>& closes,
                        int look_ahead,
                        double stop_loss_percent,
                        double take_profit_percent) {
+    
+    BENCHMARK("Strategy Signal Detection");
+    
     size_t triggers = 0, successes = 0;
 
     for (size_t i = 200; i + look_ahead < closes.size(); ++i) {

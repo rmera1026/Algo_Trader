@@ -58,29 +58,6 @@ make
 make test
 ```
 
-### Linux (Ubuntu/Debian)
-```bash
-# Install dependencies
-sudo apt-get update
-sudo apt-get install cmake libcurl4-openssl-dev libgtest-dev nlohmann-json3-dev
-
-# Build Google Test (if needed)
-cd /usr/src/gtest
-sudo cmake CMakeLists.txt
-sudo make
-sudo cp lib/*.a /usr/lib
-
-# Clone and build
-git clone https://github.com/yourusername/algo_trader.git
-cd algo_trader
-mkdir build && cd build
-cmake ..
-make
-
-# Run tests
-make test
-```
-
 ## Usage
 
 ### Set up API Key
@@ -96,13 +73,21 @@ export API_KEY=your_financial_modeling_prep_api_key
 ### Example Session
 ```
 Enter stock symbol: AAPL
+⏱️  HTTP API Request         :    45782 μs
+⏱️  Data Fetching & Parsing  :    47923 μs
 ✅ Total records: 5000
 ✅ Valid records: 5000
+⏱️  SMA Calculation         :     1247 μs
+⏱️  MACD Calculation        :     2891 μs
+⏱️  RSI Calculation         :     1653 μs
+⏱️  All Indicator Calculations:    5791 μs
+⏱️  Strategy Signal Detection:     4782 μs
 
 📊 Strategy Results
   Triggers  : 157
   Successes : 89
   Win Rate  : 56.69%
+⏱️  Total Execution Time    :    58496 μs
 ```
 
 ## Project Structure
@@ -117,7 +102,8 @@ algo_trader/
 │   ├── strategy.h        # Strategy function declarations
 │   ├── utils.cpp         # HTTP utilities for API communication
 │   ├── utils.h           # Utility function declarations
-│   └── exceptions.h      # Custom exception class definitions
+│   ├── exceptions.h      # Custom exception class definitions
+│   └── benchmark.h       # Performance timing utilities
 ├── tests/
 │   ├── test_indicators.cpp # Unit tests for technical indicators
 │   ├── test_utils.cpp      # Unit tests for utility functions
@@ -134,24 +120,6 @@ algo_trader/
 - Efficient backtesting with O(n) complexity for most operations
 - Comprehensive error handling with minimal performance overhead
 
-## Technical Details
-
-### Indicators Implemented
-- **Simple Moving Average (SMA)**: Configurable period, default 200 days
-- **MACD**: 12-day EMA, 26-day EMA, 9-day signal line
-- **RSI**: 14-day period with overbought/oversold levels
-
-### Error Handling
-- `APIException`: Network and API-related errors
-- `DataException`: Data parsing and validation errors
-- `CalculationException`: Mathematical computation errors
-
-### Testing
-- Unit tests for all indicator calculations
-- Edge case testing for invalid inputs
-- API integration tests
-- Memory leak detection (future enhancement)
-
 ## Contributing
 
 1. Fork the repository
@@ -161,21 +129,6 @@ algo_trader/
 5. Follow existing code style and conventions
 6. Submit a pull request with detailed description
 
-## Future Enhancements
-
-- [ ] Parameter optimization using genetic algorithms
-- [ ] Multi-threading for parallel strategy testing
-- [ ] Real-time WebSocket data streaming
-- [ ] Machine learning integration for signal prediction
-- [ ] Portfolio optimization and risk management
-- [ ] Database integration for historical data storage
-
 ## License
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
-## Acknowledgments
-
-- Financial Modeling Prep API for market data
-- nlohmann/json for JSON parsing capabilities
-- Google Test framework for unit testing infrastructure
+This project is licensed under the MIT License.

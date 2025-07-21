@@ -1,11 +1,9 @@
-# Ignore build files
-/build/
+build/
 *.o
-algo_trader
-
-# Ignore API keys or sensitive files
-*.env
-config.json
-
-# Ignore IDE-specific files
-.vscode/
+*.a
+CMakeCache.txt
+CMakeFiles/
+Makefile
+cmake_install.cmake
+Testing/
+CTestTestfile.cmake

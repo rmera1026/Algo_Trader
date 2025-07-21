@@ -1,5 +1,6 @@
 #include "indicators.h"
 #include "exceptions.h"
+#include "benchmark.h"
 #include <algorithm>
 #include <numeric>
 #include <cmath>
@@ -7,6 +8,8 @@
 
 // SMA calculation
 std::vector<double> calc_sma(const std::vector<double>& v, int period) {
+    BENCHMARK("SMA Internal Calculation");
+    
     if (period <= 0) {
         throw CalculationException("SMA period must be positive");
     }
@@ -28,23 +31,25 @@ std::vector<double> calc_sma(const std::vector<double>& v, int period) {
 }
 
 // MACD calculation
-MACD calc_macd(const std::vector<double>& c, int fast, int slow, int sig) {
-    std::vector<double> macd(c.size()), ema_fast(c.size()), ema_slow(c.size());
-    if (c.empty()) return {macd, macd};
+MACD calc_macd(const std::vector<double>& closes, int fast, int slow, int signal_period) {
+    BENCHMARK("MACD Internal Calculation");
+    
+    std::vector<double> macd(closes.size()), ema_fast(closes.size()), ema_slow(closes.size());
+    if (closes.empty()) return {macd, macd};
 
-    ema_fast[0] = ema_slow[0] = c[0];
-    for (size_t i = 1; i < c.size(); ++i) {
+    ema_fast[0] = ema_slow[0] = closes[0];
+    for (size_t i = 1; i < closes.size(); ++i) {
         double k_fast = 2.0 / (fast + 1.0);
         double k_slow = 2.0 / (slow + 1.0);
-        ema_fast[i] = c[i] * k_fast + ema_fast[i - 1] * (1.0 - k_fast);
-        ema_slow[i] = c[i] * k_slow + ema_slow[i - 1] * (1.0 - k_slow);
+        ema_fast[i] = closes[i] * k_fast + ema_fast[i - 1] * (1.0 - k_fast);
+        ema_slow[i] = closes[i] * k_slow + ema_slow[i - 1] * (1.0 - k_slow);
         macd[i] = ema_fast[i] - ema_slow[i];
     }
 
-    std::vector<double> signal(c.size());
+    std::vector<double> signal(closes.size());
     signal[0] = macd[0];
-    for (size_t i = 1; i < c.size(); ++i) {
-        double k_sig = 2.0 / (sig + 1.0);
+    for (size_t i = 1; i < closes.size(); ++i) {
+        double k_sig = 2.0 / (signal_period + 1.0);
         signal[i] = macd[i] * k_sig + signal[i - 1] * (1.0 - k_sig);
     }
 
@@ -53,6 +58,8 @@ MACD calc_macd(const std::vector<double>& c, int fast, int slow, int sig) {
 
 // RSI calculation
 std::vector<double> calc_rsi(const std::vector<double>& closes, int period) {
+    BENCHMARK("RSI Internal Calculation");
+    
     std::vector<double> rsi(closes.size(), std::numeric_limits<double>::quiet_NaN());
     if (closes.size() < period + 1) return rsi;
 
