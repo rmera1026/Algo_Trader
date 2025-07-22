@@ -13,7 +13,8 @@ using json = nlohmann::json;
 
 int main() {
     try {
-        BENCHMARK("Total Execution Time");
+        // Uncomment to enable Total Execution Time benchmarking
+        // BENCHMARK("Total Execution Time");
         
         const char* apiKey = std::getenv("API_KEY");
         if (!apiKey) {
@@ -32,7 +33,8 @@ int main() {
         nlohmann::json historical;  // Fixed: specify the type instead of auto
         
         {
-            BENCHMARK("Data Fetching & Parsing");
+            // Uncomment to enable Data Fetching & Parsing benchmarking
+            // BENCHMARK("Data Fetching & Parsing");
             readBuffer = http_get(url);
 
             if (readBuffer.empty()) {
@@ -96,17 +98,17 @@ int main() {
         std::vector<double> rsi;
 
         {
-            BENCHMARK("All Indicator Calculations");
+            // BENCHMARK("All Indicator Calculations");
             {
-                BENCHMARK("SMA Calculation");
+                // BENCHMARK("SMA Calculation");
                 sma200 = calc_sma(closes, MA_PERIOD);
             }
             {
-                BENCHMARK("MACD Calculation");
+                // BENCHMARK("MACD Calculation");
                 macd = calc_macd(closes);
             }
             {
-                BENCHMARK("RSI Calculation");
+                // BENCHMARK("RSI Calculation");
                 rsi = calc_rsi(closes, RSI_PERIOD);
             }
         }
@@ -117,7 +119,8 @@ int main() {
         }
 
         {
-            BENCHMARK("Strategy Backtesting");
+            // Uncomment to enable strategy backtesting
+            // BENCHMARK("Strategy Backtesting");
             backtest_strategy(closes, sma200, rsi, macd.macd, macd.signal, LOOK_AHEAD, STOP_LOSS_PERCENT, TAKE_PROFIT_PERCENT);
         }
 

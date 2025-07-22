@@ -36,8 +36,8 @@ TEST_F(IndicatorsTest, RSICalculation) {
     
     // RSI should be high (>50) for uptrending data, and within valid range (0-100)
     EXPECT_GT(rsi[15], 50.0);
-    EXPECT_LE(rsi[15], 100.0);  // Changed from LT to LE (less than or equal)
-    EXPECT_GE(rsi[15], 0.0);    // Added check for lower bound
+    EXPECT_LE(rsi[15], 100.0);
+    EXPECT_GE(rsi[15], 0.0);
 }
 
 TEST_F(IndicatorsTest, MACDCalculation) {
