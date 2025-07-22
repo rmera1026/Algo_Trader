@@ -19,6 +19,7 @@ set(SOURCES
     src/utils.cpp
     src/indicators.cpp
     src/strategy.cpp
+    src/optimizer.cpp
 )
 
 # Create executable

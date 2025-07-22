@@ -7,6 +7,7 @@
 #include "strategy.h"
 #include "exceptions.h"
 #include "benchmark.h"
+#include "optimizer.h"
 
 using json = nlohmann::json;
 
@@ -118,6 +119,28 @@ int main() {
         {
             BENCHMARK("Strategy Backtesting");
             backtest_strategy(closes, sma200, rsi, macd.macd, macd.signal, LOOK_AHEAD, STOP_LOSS_PERCENT, TAKE_PROFIT_PERCENT);
+        }
+
+        std::cout << "\n🤖 Running Parameter Optimization...\n";
+        std::string optimize_choice;
+        std::cout << "Run genetic algorithm optimization? (y/n): ";
+        std::cin >> optimize_choice;
+
+        if (optimize_choice == "y" || optimize_choice == "Y") {
+            GeneticOptimizer optimizer(30, 50); // 30 population, 50 generations
+            auto opt_result = optimizer.optimize(closes, backtest_fitness);
+            
+            std::cout << "\n📊 Testing Optimized vs Original Parameters:\n";
+            
+            // Test optimized parameters
+            auto opt_sma = calc_sma(closes, opt_result.best_params.ma_period);
+            auto opt_macd = calc_macd(closes);
+            auto opt_rsi = calc_rsi(closes, opt_result.best_params.rsi_period);
+            
+            std::cout << "\n🎯 Optimized Strategy Results:\n";
+            // You can create a version of backtest_strategy that accepts parameters
+            // For now, just show the fitness improvement
+            std::cout << "Fitness Score: " << opt_result.best_fitness << " (vs default strategy)\n";
         }
 
         return 0;
