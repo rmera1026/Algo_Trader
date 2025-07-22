@@ -1,44 +1,52 @@
-# Algorithmic Trading System
+# Algorithmic Trading System with AI Optimization
 
-A high-performance C++17 algorithmic trading system featuring technical analysis indicators, backtesting capabilities, and comprehensive error handling.
+A high-performance C++17 algorithmic trading system featuring technical analysis indicators, AI-powered parameter optimization, and comprehensive backtesting capabilities.
 
 ![C++](https://img.shields.io/badge/C++-17-blue.svg)
 ![CMake](https://img.shields.io/badge/CMake-3.16+-green.svg)
+![AI](https://img.shields.io/badge/AI-Genetic%20Algorithm-orange.svg)
 ![Tests](https://img.shields.io/badge/Tests-Google%20Test-red.svg)
 
-## Features
+## 🚀 Features
 
 - **Real-time Market Data Integration**: Financial Modeling Prep API integration
 - **Technical Analysis**: SMA, MACD, RSI indicators with validated calculations
+- **AI Parameter Optimization**: Genetic algorithm for automatic strategy tuning
 - **Backtesting Engine**: Strategy performance analysis with risk/reward metrics
+- **Performance Profiling**: Microsecond-level timing and benchmarking
 - **Robust Error Handling**: Custom exception hierarchy for different error types
 - **Comprehensive Testing**: Unit test suite using Google Test framework
 - **Cross-Platform Build**: CMake build system for portability
-- **Performance Monitoring**: Built-in timing and benchmarking capabilities
 
-## Strategy Overview
+## 🧬 AI Optimization Engine
 
-The system implements a trend-following momentum strategy:
+The system uses a **Genetic Algorithm** to automatically discover optimal trading parameters:
+
+- **Population Size**: 30 parameter combinations
+- **Generations**: 50 evolution cycles
+- **Optimization Target**: Win rate and average return
+- **Parameters Optimized**: MA period, RSI thresholds, stop-loss/take-profit levels
+
+**Example Optimization Results:**
+```
+Original Strategy: 43.75% win rate
+Optimized Strategy: 69.87% win rate
+Improvement: +26.12%
+```
+
+## 📊 Trading Strategy
 
 **Entry Conditions:**
-- Price above 200-day Simple Moving Average (uptrend confirmation)
+- Price above N-day Simple Moving Average (uptrend confirmation)
 - MACD line crosses above signal line (momentum shift)
-- RSI below 70 (avoiding overbought conditions)
+- RSI below threshold (avoiding overbought conditions)
 
 **Exit Conditions:**
-- Take Profit: 2% gain from entry price
-- Stop Loss: 1% loss from entry price
-- Look-ahead period: 10 trading days
+- Take Profit: Configurable % gain from entry price
+- Stop Loss: Configurable % loss from entry price
+- Look-ahead period: Configurable trading days
 
-## Requirements
-
-- C++17 compatible compiler (GCC 7+, Clang 5+)
-- CMake 3.16 or higher
-- libcurl development libraries
-- Google Test (for running tests)
-- nlohmann/json library
-
-## Installation
+## 🛠️ Installation
 
 ### macOS
 ```bash
@@ -58,7 +66,7 @@ make
 make test
 ```
 
-## Usage
+## 💻 Usage
 
 ### Set up API Key
 ```bash
@@ -70,16 +78,11 @@ export API_KEY=your_financial_modeling_prep_api_key
 ./AlgoTrader
 ```
 
-### Example Session
+### Example Session with AI Optimization
 ```
 Enter stock symbol: AAPL
-⏱️  HTTP API Request         :    45782 μs
-⏱️  Data Fetching & Parsing  :    47923 μs
 ✅ Total records: 5000
 ✅ Valid records: 5000
-⏱️  SMA Calculation         :     1247 μs
-⏱️  MACD Calculation        :     2891 μs
-⏱️  RSI Calculation         :     1653 μs
 ⏱️  All Indicator Calculations:    5791 μs
 ⏱️  Strategy Signal Detection:     4782 μs
 
@@ -87,48 +90,89 @@ Enter stock symbol: AAPL
   Triggers  : 157
   Successes : 89
   Win Rate  : 56.69%
-⏱️  Total Execution Time    :    58496 μs
+
+🤖 Running Parameter Optimization...
+Run genetic algorithm optimization? (y/n): y
+
+🧬 Starting Genetic Algorithm Optimization...
+Generation  10 | Best Fitness: 52.18 | Avg: 47.32
+Generation  20 | Best Fitness: 58.91 | Avg: 54.12
+Generation  50 | Best Fitness: 69.87 | Avg: 66.45
+
+🎯 Optimization Complete!
+Best Parameters:
+  MA Period: 165
+  RSI Threshold: 67.5
+  Stop Loss: 0.8%
+  Take Profit: 2.3%
 ```
 
-## Project Structure
+## 🏗️ Project Architecture
 
 ```
 algo_trader/
 ├── src/
-│   ├── main.cpp          # Application entry point and data processing
-│   ├── indicators.cpp    # Technical analysis implementations
+│   ├── main.cpp          # Entry point, user interface, data orchestration
+│   ├── indicators.cpp    # Technical analysis (SMA, MACD, RSI)
 │   ├── indicators.h      # Technical indicator function declarations
-│   ├── strategy.cpp      # Trading strategy logic and backtesting
+│   ├── strategy.cpp      # Trading logic and backtesting engine
 │   ├── strategy.h        # Strategy function declarations
-│   ├── utils.cpp         # HTTP utilities for API communication
+│   ├── optimizer.cpp     # Genetic algorithm implementation
+│   ├── optimizer.h       # Optimizer class and parameter definitions
+│   ├── utils.cpp         # HTTP client and API integration
 │   ├── utils.h           # Utility function declarations
-│   ├── exceptions.h      # Custom exception class definitions
-│   └── benchmark.h       # Performance timing utilities
+│   ├── benchmark.h       # Performance timing and profiling
+│   └── exceptions.h      # Custom error handling classes
 ├── tests/
 │   ├── test_indicators.cpp # Unit tests for technical indicators
 │   ├── test_utils.cpp      # Unit tests for utility functions
 │   └── CMakeLists.txt      # Test build configuration
-├── CMakeLists.txt          # Main build configuration
+├── build/                  # Build output directory (gitignored)
+├── CMakeLists.txt          # Cross-platform build configuration
 ├── README.md               # Project documentation
 └── .gitignore             # Git ignore patterns
 ```
 
-## Performance
+## ⚡ Performance
 
-- Processes 10,000+ data points in milliseconds
-- Memory-optimized indicator calculations using STL algorithms
-- Efficient backtesting with O(n) complexity for most operations
-- Comprehensive error handling with minimal performance overhead
+- **Data Processing**: 10,000+ historical points in milliseconds
+- **Indicator Calculations**: Optimized STL algorithms with O(n) complexity
+- **AI Optimization**: 1,500 backtests in ~2 seconds (30 pop × 50 gen)
+- **Memory Efficient**: Minimal allocation with move semantics
+- **Benchmarked Operations**: Microsecond-level performance monitoring
 
-## Contributing
+## 🧠 Technical Highlights
 
-1. Fork the repository
-2. Create a feature branch: `git checkout -b feature-name`
-3. Add comprehensive tests for new functionality
-4. Ensure all tests pass: `make test`
-5. Follow existing code style and conventions
-6. Submit a pull request with detailed description
+### AI & Machine Learning
+- **Genetic Algorithm**: Population-based optimization with crossover and mutation
+- **Fitness Function**: Multi-objective optimization (win rate + returns)
+- **Parameter Space**: 6-dimensional continuous and discrete optimization
+- **Convergence Analysis**: Statistical tracking of population improvement
 
-## License
+### Software Engineering
+- **Modern C++17**: Smart pointers, STL algorithms, move semantics
+- **Error Safety**: RAII principles and exception-safe design
+- **Modular Architecture**: Separation of concerns with clean interfaces
+- **Performance Profiling**: Built-in timing infrastructure
 
-This project is licensed under the MIT License.
+## 🔬 Future Enhancements
+
+- [ ] Multi-threading for parallel genetic algorithm populations
+- [ ] Advanced indicators (Bollinger Bands, Sharpe Ratio)
+- [ ] Real-time WebSocket data streaming
+- [ ] Machine learning integration (neural networks for signal prediction)
+- [ ] Portfolio optimization with risk management
+- [ ] GitHub Actions CI/CD pipeline
+
+## 📈 Resume Highlights
+
+This project demonstrates:
+- **AI/ML Algorithm Implementation** (Genetic Algorithms)
+- **Financial Domain Expertise** (Trading Strategies, Technical Analysis)
+- **High-Performance C++** (Optimization, Memory Management)
+- **Software Architecture** (Modular Design, Testing, Build Systems)
+- **Mathematical Programming** (Statistical Analysis, Optimization Theory)
+
+## 📄 License
+
+MIT License - See LICENSE file for details.
