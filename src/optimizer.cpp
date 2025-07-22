@@ -139,14 +139,25 @@ OptimizationResult GeneticOptimizer::optimize(
     std::cout << "  Stop Loss: " << result.best_params.stop_loss * 100 << "%\n";
     std::cout << "  Take Profit: " << result.best_params.take_profit * 100 << "%\n";
     std::cout << "  Look Ahead: " << result.best_params.look_ahead << " days\n";
-    std::cout << "  Best Fitness: " << result.best_fitness << "\n\n";
+
+    // Calculate and display actual optimized performance
+    auto opt_result = backtest_detailed(prices, result.best_params);
+    std::cout << "\n📊 Optimized Strategy Performance:\n";
+    std::cout << "  Triggers: " << opt_result.triggers << "\n";
+    std::cout << "  Successes: " << opt_result.successes << "\n";
+    std::cout << "  Win Rate: " << std::fixed << std::setprecision(2) << opt_result.win_rate << "%\n";
+    std::cout << "  Fitness Score: " << result.best_fitness << "\n\n";
     
     return result;
 }
 
-double backtest_fitness(const std::vector<double>& prices, const StrategyParameters& params) {
+// Detailed backtest function that returns full results
+
+BacktestResult backtest_detailed(const std::vector<double>& prices, const StrategyParameters& params) {
+    BacktestResult result{-1000.0, 0.0, 0, 0};
+    
     if (prices.size() < params.ma_period + params.look_ahead + 50) {
-        return -1000.0; // Penalty for insufficient data
+        return result;
     }
     
     try {
@@ -184,15 +195,27 @@ double backtest_fitness(const std::vector<double>& prices, const StrategyParamet
             }
         }
         
-        if (triggers == 0) return -100.0;
+        if (triggers == 0) {
+            result.fitness = -100.0;
+            return result;
+        }
         
         double win_rate = static_cast<double>(successes) / triggers;
         double avg_return = total_return / triggers;
         
-        // Fitness function: combination of win rate and average return
-        return win_rate * 100.0 + avg_return * 1000.0;
+        result.fitness = win_rate * 100.0 + avg_return * 1000.0;
+        result.win_rate = win_rate * 100.0;
+        result.triggers = triggers;
+        result.successes = successes;
+        
+        return result;
         
     } catch (...) {
-        return -1000.0; // Penalty for calculation errors
+        return result;
     }
+}
+
+// Original function for compatibility
+double backtest_fitness(const std::vector<double>& prices, const StrategyParameters& params) {
+    return backtest_detailed(prices, params).fitness;
 }

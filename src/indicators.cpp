@@ -8,7 +8,8 @@
 
 // SMA calculation
 std::vector<double> calc_sma(const std::vector<double>& v, int period) {
-    BENCHMARK("SMA Internal Calculation");
+    // Uncomment the following line to enable benchmarking
+    // BENCHMARK("SMA Internal Calculation");
     
     if (period <= 0) {
         throw CalculationException("SMA period must be positive");
@@ -32,8 +33,9 @@ std::vector<double> calc_sma(const std::vector<double>& v, int period) {
 
 // MACD calculation
 MACD calc_macd(const std::vector<double>& closes, int fast, int slow, int signal_period) {
-    BENCHMARK("MACD Internal Calculation");
-    
+    // Uncomment the following line to enable benchmarking
+    // BENCHMARK("MACD Internal Calculation");
+
     std::vector<double> macd(closes.size()), ema_fast(closes.size()), ema_slow(closes.size());
     if (closes.empty()) return {macd, macd};
 
@@ -58,8 +60,9 @@ MACD calc_macd(const std::vector<double>& closes, int fast, int slow, int signal
 
 // RSI calculation
 std::vector<double> calc_rsi(const std::vector<double>& closes, int period) {
-    BENCHMARK("RSI Internal Calculation");
-    
+    // Uncomment the following line to enable benchmarking
+    // BENCHMARK("RSI Internal Calculation");
+
     std::vector<double> rsi(closes.size(), std::numeric_limits<double>::quiet_NaN());
     if (closes.size() < period + 1) return rsi;
 

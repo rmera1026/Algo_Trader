@@ -47,4 +47,13 @@ public:
 // Fitness function for backtesting
 double backtest_fitness(const std::vector<double>& prices, const StrategyParameters& params);
 
+struct BacktestResult {
+    double fitness;
+    double win_rate;
+    size_t triggers;
+    size_t successes;
+};
+
+BacktestResult backtest_detailed(const std::vector<double>& prices, const StrategyParameters& params);
+
 #endif // OPTIMIZER_H
